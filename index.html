@@ -1,0 +1,696 @@
+<html>
+<head>
+    <meta charset="utf-8">
+	<meta property="og:type"               content="website" />
+	<meta property="og:title"              content="CHOUFLI HAL QUIZ !" />
+	<meta property="og:description"        content="CHOUFLI HAL QUIZ !" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+	<link rel="shortcut icon" href="logo.png" type="image/x-icon">
+        <link href="https://fonts.googleapis.com/css?family=Cairo" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <style src="https://fonts.googleapis.com/css?family=Flamenco|Asap:400,700'rel='stylesheet'type='text/css'"></style>
+    <style src="https://code.ionicframework.com/ionicons/1.5.2/css/ionicons.min.css"></style>
+    <script>
+      // VARIABLE DECLARATIONS ------
+  
+      // pages
+  var initPage,
+      questionsPage,
+      resultsPage,
+      // buttons
+      startBtn,
+      submitBtn,
+      continueBtn,
+      retakeBtn,
+      spanishBtn,
+      // question and answers
+      question,
+      answerList,
+      answerSpan,
+      answerA,
+      answerB,
+      answerC,
+      answerD,
+      // event listeners
+      answerDiv,
+      answerDivA,
+      answerDivB,
+      answerDivC,
+      answerDivD,
+      feedbackDiv,
+      selectionDiv,
+      toBeHighlighted,
+      toBeMarked,
+      userScore,
+      // quiz
+      quiz,
+      questionCounter,
+      correctAnswer,
+      correctAnswersCounter,
+      userSelectedAnswer,
+      // function names
+      newQuiz,
+      generateQuestionAndAnswers,
+      getCorrectAnswer,
+      getUserAnswer,
+      selectAnswer,
+      deselectAnswer,
+      selectCorrectAnswer,
+      deselectCorrectAnswer,
+      getSelectedAnswerDivs,
+      highlightCorrectAnswerGreen,
+      highlightIncorrectAnswerRed,
+      clearHighlightsAndFeedback;
+
+$(document).ready(function(){
+  
+  // DOM SELECTION ------
+  
+    // App pages
+      // Page 1 - Initial
+    initPage = $('.init-page');
+      // Page 2 - Questions/answers
+    questionsPage = $('.questions-page');
+      // Page 3 - Results
+    resultsPage = $('.results-page');
+  
+    // Buttons
+    startBtn = $('.init-page__btn');
+    submitBtn = $('.questions-page__submit-btn');
+    continueBtn = $('.questions-page__continue-btn');
+    retakeBtn = $('.results-page__retake-btn');
+    spanishBtn = $('.results-page__spanish-btn');
+  
+    // Answer block divs
+    answerDiv = $('.questions-page__answer-div');
+    answerDivA = $('.questions-page__answer-div-a');
+    answerDivB = $('.questions-page__answer-div-b');
+    answerDivC = $('.questions-page__answer-div-c');
+    answerDivD = $('.questions-page__answer-div-d');
+  
+    // Selection div (for the pointer, on the left)
+    selectionDiv = $('.questions-page__selection-div');
+  
+    // Feedback div (for the checkmark or X, on the right)
+    feedbackDiv = $('.questions-page__feedback-div');
+  
+    // Questions and answers
+    question = $('.questions-page__question');
+    answerList = $('.questions-page__answer-list');
+    answerSpan = $('.questions-page__answer-span');
+    answerA = $('.questions-page__answer-A');
+    answerB = $('.questions-page__answer-B');
+    answerC = $('.questions-page__answer-C');
+    answerD = $('.questions-page__answer-D');
+  
+    // User final score
+    userScore = $('.results-page__score');
+  
+  // QUIZ CONTENT ------
+    quiz = [
+    {
+      question: "! سليمان شنوة يخدم  ",
+      answers: ["طبيب نفساني", "صلاح تلافز", "بيطري", "فرملي"],
+      correctAnswer: "طبيب نفساني"
+    },
+    {
+      question: "! شكون سكرتيرة سليمان",
+      answers: ["عزة", "دلندة", "سنية", "فوفا"],
+      correctAnswer: "دلندة"
+    },
+    
+          {
+      question: "! شنوا يبيع بوتيك زينب ",
+      answers: ["حوايج", "صبابط", "ديكورات", "شورما"],
+      correctAnswer: "ديكورات"
+    },
+         {
+      question: "! شنوا إسمو خطيب أماني",
+      answers: ["نبيل", "سليم", "لبيب", "حكيم"],
+      correctAnswer: "لبيب"
+    },
+       {
+      question: "! شسمو الحي الي حول عائلة سليمان يسكن فيه",
+      answers: ["حي الزهور", "حي النصر", "حي التحرير", "حي الانطلاقة"],
+      correctAnswer: "حي النصر"
+    },
+         {
+      question: "!وين استدعا الفاضل تلميذتو فضيلة ",
+      answers: ["للسينيما", "للمسرح", "للقهوة", "للمطعم"],
+      correctAnswer: "للمسرح"
+    },
+           {
+      question: "!شنوا اسمها العرافة الي جات لبلاص جنات ",
+      answers: ["خالتي محسونة", "خالتي ديامونتا", "خالتي سالمة", "خالتي جويدة"],
+      correctAnswer: "خالتي ديامونتا"
+    },
+   {
+      question: "! باش مرض السبوعي",
+      answers: ["بمعدتو", "بقلبو", "براسو", "بزرستو"],
+      correctAnswer: "بزرستو"
+    },
+         {
+      question: "! شنوا اسمو برنامج الي كلمتو عزة ",
+      answers: ["90 دقيقة", "فكرة سامي الفهري", "فوروم ونغم", "همس الليل"],
+      correctAnswer: "فوروم ونغم"
+    },
+          {
+      question: "! شنوة جاب سبوعي و عزة كي عرسوا",
+      answers: ["زوز بنات", "زوز ولاد", "طفلة و طفل", "طفلة كهو"],
+      correctAnswer: "طفلة و طفل"
+    },
+  {
+      question: "! شنا اسمو ولد خالة زينب",
+      answers: ["فاخر", "سامي", "سامي", "فاكر"],
+      correctAnswer: "فاكر"
+    }, {
+      question: "! شنوا شرا السبوعي كادو عيد الامهات لخالتك فضيلة",
+      answers: ["قصة قماش", "سجادة", "سبحة", "خاتم"],
+      correctAnswer: "سجادة"
+    },
+        {
+      question: "! قداش يسال السبوعي سليمان فلوس ",
+      answers: ["2ملاين", "3 ملاين", "4ملاين", "5 ملاين"],
+      correctAnswer: "سجادة"
+    },
+        {
+      question: "! شنوا اسم حجامة دوجة ام زينب",
+      answers: ["شوشو", "مومو", "زوزو", "كوكو"],
+      correctAnswer: "شوشو"
+    },
+        
+        
+  ];
+  
+// FUNCTION DECLARATIONS ------
+  
+  // Start the quiz
+  newQuiz = function() { 
+    // Set the question counter to 0
+    questionCounter = 0;
+    
+    // Set the total correct answers counter to 0
+    correctAnswersCounter = 0;
+    
+    // Hide other pages of the app
+    questionsPage.hide();
+    resultsPage.hide();
+  };
+  
+  // Load the next question and set of answers
+  generateQuestionAndAnswers = function() {
+    question.text(quiz[questionCounter].question);
+    answerA.text(quiz[questionCounter].answers[0]);
+    answerB.text(quiz[questionCounter].answers[1]);
+    answerC.text(quiz[questionCounter].answers[2]);
+    answerD.text(quiz[questionCounter].answers[3]);
+  };
+  
+  // Store the correct answer of a given question
+  getCorrectAnswer = function() {
+    correctAnswer = quiz[questionCounter].correctAnswer;
+  };
+  
+  // Store the user's selected (clicked) answer
+  getUserAnswer = function(target) {
+    userSelectedAnswer = $(target).find(answerSpan).text();
+  };
+
+  // Add the pointer to the clicked answer
+  selectAnswer = function(target) {
+    $(target).find(selectionDiv).addClass('ion-chevron-right');
+  };
+
+  // Remove the pointer from any answer that has it
+  deselectAnswer = function() {
+    if (selectionDiv.hasClass('ion-chevron-right')) {
+      selectionDiv.removeClass('ion-chevron-right');
+    }
+  };
+  
+  // Get the selected answer's div for highlighting purposes
+  getSelectedAnswerDivs = function(target) {
+    toBeHighlighted = $(target);
+    toBeMarked = $(target).find(feedbackDiv);
+  };
+  
+  // Make the correct answer green and add checkmark
+  highlightCorrectAnswerGreen = function(target) {
+    if (correctAnswer === answerA.text()) {
+      answerDivA.addClass('questions-page--correct');
+      answerDivA.find(feedbackDiv).addClass('ion-checkmark-round');
+    }
+    if (correctAnswer === answerB.text()) {
+      answerDivB.addClass('questions-page--correct');
+      answerDivB.find(feedbackDiv).addClass('ion-checkmark-round');
+    }
+    if (correctAnswer === answerC.text()) {
+      answerDivC.addClass('questions-page--correct');
+      answerDivC.find(feedbackDiv).addClass('ion-checkmark-round');
+    }
+    if (correctAnswer === answerD.text()) {
+      answerDivD.addClass('questions-page--correct');
+      answerDivD.find(feedbackDiv).addClass('ion-checkmark-round');
+    }
+  };
+  
+  // Make the incorrect answer red and add X
+  highlightIncorrectAnswerRed = function() {
+    toBeHighlighted.addClass('questions-page--incorrect');
+    toBeMarked.addClass('ion-close-round');
+  };
+  
+  // Clear all highlighting and feedback
+  clearHighlightsAndFeedback = function() {
+    answerDiv.removeClass('questions-page--correct');
+    answerDiv.removeClass('questions-page--incorrect');
+    feedbackDiv.removeClass('ion-checkmark-round');
+    feedbackDiv.removeClass('ion-close-round');
+  };
+  
+// APP FUNCTIONALITY ------
+  
+  /* --- PAGE 1/3 --- */
+  
+  // Start the quiz:
+  newQuiz();
+  
+  // Clicking on start button:
+  startBtn.on('click', function(){
+    
+    // Advance to questions page
+    initPage.hide();
+    questionsPage.show(300);
+    
+    // Load question and answers
+    generateQuestionAndAnswers();
+    
+    // Store the correct answer in a variable
+    getCorrectAnswer();
+    
+    // Hide the submit and continue buttons
+    submitBtn.hide();
+    continueBtn.hide();
+    
+  });
+  
+  /* --- PAGE 2/3 --- */
+  
+  // Clicking on an answer:
+  answerDiv.on('click', function(){
+    
+    // Make the submit button visible
+    submitBtn.show(300);
+    
+    // Remove pointer from any answer that already has it
+    deselectAnswer();
+    
+    // Put pointer on clicked answer
+    selectAnswer(this);
+    
+    // Store current selection as user answer
+    getUserAnswer(this);
+    
+    // Store current answer div for highlighting purposes
+    getSelectedAnswerDivs(this);
+    
+  });
+  
+  // Clicking on the submit button:
+  submitBtn.on('click', function(){
+    
+    // Disable ability to select an answer
+    answerDiv.off('click');
+      
+    // Make correct answer green and add a checkmark
+    highlightCorrectAnswerGreen();
+    
+    // Evaluate if the user got the answer right or wrong
+    if (userSelectedAnswer === correctAnswer) {
+      // Increment the total correct answers counter
+      correctAnswersCounter++;
+    }
+    else {
+      highlightIncorrectAnswerRed();
+    }
+    
+    // Substitute the submit button for the continue button:
+    submitBtn.hide(300);
+    continueBtn.show(300);
+    
+  });
+  
+  // Clicking on the continue button:
+  continueBtn.on('click', function(){
+    
+    // Increment question number until there are no more questions, then advance to the next page
+    if (questionCounter < quiz.length - 1) {
+      questionCounter++;
+    }
+    else {
+      questionsPage.hide();
+      resultsPage.show(300);
+      // Display user score as a percentage
+      userScore.text(Math.floor((correctAnswersCounter / quiz.length) * 100) + "%");
+    }
+    
+    // Load the next question and set of answers
+    generateQuestionAndAnswers();
+    
+    // Store the correct answer in a variable
+    getCorrectAnswer();
+    
+    // Remove all selections, highlighting, and feedback
+    deselectAnswer();
+    clearHighlightsAndFeedback();
+    
+    // Hide the continue button
+    continueBtn.hide(300);
+    
+    // Enable ability to select an answer
+    answerDiv.on('click', function(){
+      // Make the submit button visible
+      submitBtn.show(300);
+      // Remove pointer from any answer that already has it
+      deselectAnswer();
+      // Put pointer on clicked answer
+      selectAnswer(this);
+      // Store current answer div for highlighting purposes
+      getSelectedAnswerDivs(this);
+      // Store current selection as user answer
+      getUserAnswer(this);
+    });
+    
+  });
+  
+  /* --- PAGE 3/3 --- */
+
+  // Clicking on the retake button:
+  retakeBtn.on('click', function(){
+    
+    // Go to the first page
+    resultsPage.hide();
+    initPage.show(300);
+  
+    // Start the quiz over
+    newQuiz();
+    
+  });
+
+  // Clicking on the spanish button:
+    // Link takes user to Duolingo
+  
+});
+    </script>
+    <style>
+   /* ----------------------------
+STYLES/LAYOUT
+---------------------------- */
+
+html {
+  font-size: 60%;
+                font-family: 'Cairo', sans-serif;
+
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+
+body {
+  background: #ADD8E6;
+  font-size: 1rem;
+            font-family: 'Cairo', sans-serif;
+  color: rgba(0, 0, 0, 0.87);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 480px;
+}
+
+h1, h2, h3, h4, h5, h6, div, p, i {
+  margin: 0;
+                font-family: 'Cairo', sans-serif;
+
+}
+
+form {
+  margin-top: 20px;
+}
+
+/* Container divs*/
+.init-page,
+.questions-page,
+.results-page {
+  height: 100%;
+}
+
+.container {
+  width: 90%;
+  height: 100%;
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Button */
+.btn {
+  margin: 2rem auto 0;
+  display: block;
+  width: 100%;
+  font-size: 2.5rem;
+  padding: 1.5rem 0;
+  background: #01ABAA;
+  border: none;
+}
+
+.btn {
+  background: #019393;
+                font-family: 'Cairo', sans-serif;
+
+}
+
+/* TITLE PAGE */
+
+.init-page__title {
+  margin: 0;
+            font-family: 'Cairo', sans-serif;
+  font-size: 5rem;
+}
+
+.init-page__icon {
+  font-size: 20rem;
+  margin: 0;
+}
+
+/* QUESTIONS PAGE*/
+
+.questions-page__question {
+  padding: 0;
+  font-size: 2.2rem;
+  height: 11rem;
+}
+
+.questions-page__answer-list {
+  padding: 0;
+  list-style-type: none;
+  font-size: 2rem;
+  line-height: 5rem;
+}
+
+.questions-page__answer-line {
+  margin: 0 auto;
+  width: 75%;
+  cursor: pointer;
+}
+
+.questions-page__selection-div {
+  float: left;
+  padding-left: 1rem;
+  font-size: 2.75rem;
+}
+
+.questions-page__feedback-div {
+  float: right;
+  padding-right: 1rem;
+  font-size: 2.5rem;
+}
+
+.questions-page--correct {
+  background: #76B574;            font-family: 'Cairo', sans-serif;
+
+}
+
+.questions-page--incorrect {
+  background: #FEA680;
+}
+
+.btn-holder {
+  height: 6rem;
+}
+
+/* RESULTS PAGE */
+
+.results-page__info {
+  font-size: 3rem;
+}
+
+.results-page__score {
+  font-size: 10rem;
+  margin-top: 3rem;
+  margin-bottom: 5rem;
+}
+
+.results-page__spanish-btn {
+  margin-top: 3rem;
+}
+
+.results-page__spanish-btn-link {
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+
+/* ----------------------------
+MEDIA QUERIES
+---------------------------- */
+
+@media screen and (min-width: 480px) {
+
+  html {
+    font-size: 85%;            font-family: 'Cairo', sans-serif;
+
+  }
+
+  body {
+    min-height: 700px;
+                  font-family: 'Cairo', sans-serif;
+
+  }
+
+  .container {
+    width: 80%;            font-family: 'Cairo', sans-serif;
+
+  }
+
+  .questions-page__question {
+    height: 8rem;            font-family: 'Cairo', sans-serif;
+
+  }
+
+}
+
+@media screen and (min-width: 1100px) {
+
+  html {
+    font-size: 100%;
+  }
+
+  body {
+    min-height: 800px;
+  }
+    img {
+
+  width: 250px;
+        position: center;
+        object-position: center;
+}
+
+}
+
+    </style>
+</head>
+    <header>
+       <center>     <img src="logo.png" siza="10px" ></center>
+
+    </header>
+<body>
+<div class="init-page">
+    <div class="container">
+        <h1 class="init-page__title">Choufli 7al Quiz!</h1>
+        <p class="init-page__icon ion-earth"></p>
+        <button class="init-page__btn btn">اقصد ربي </button>
+    </div>
+</div>
+
+<div class="questions-page">
+    <div class="container">
+        <h2 class="questions-page__question"></h2>
+        <ul class="questions-page__answer-list">
+            <!--  Letter A  -->
+            <!--  Answer div  -->
+            <div class="questions-page__answer-div questions-page__answer-div-a">
+                <!--  Selector div  -->
+                <div class="questions-page__selection-div"></div>
+                <!--  Feedback div -->
+                <div class="questions-page__feedback-div"></div>
+                <!--  Answer -->
+                <li class="questions-page__answer-line" style="direction: rtl"> <span class="questions-page__answer-span questions-page__answer-A">-1- </span></li>
+            </div>
+
+            <!--  Letter B  -->
+            <!--  Answer div  -->
+            <div class="questions-page__answer-div questions-page__answer-div-b">
+                <!--  Selector div  -->
+                <div class="questions-page__selection-div"></div>
+                <!--  Feedback div -->
+                <div class="questions-page__feedback-div"></div>
+                <!--  Answer -->
+                <li class="questions-page__answer-line" style="direction: rtl"> <span class="questions-page__answer-span questions-page__answer-B">-2-</span></li>
+            </div>
+
+            <!--  Letter C  -->
+            <!--  Answer div  -->
+            <div class="questions-page__answer-div questions-page__answer-div-c">
+                <!--  Selector div  -->
+                <div class="questions-page__selection-div"></div>
+                <!--  Feedback div -->
+                <div class="questions-page__feedback-div"></div>
+                <!--  Answer -->
+                <li class="questions-page__answer-line" style="direction: rtl"> <span class="questions-page__answer-span questions-page__answer-C">-3-</span></li>
+            </div>
+
+            <!--  Letter D  -->
+            <!--  Answer div  -->
+            <div class="questions-page__answer-div questions-page__answer-div-d">
+                <!--  Selector div  -->
+                <div class="questions-page__selection-div"></div>
+                <!--  Feedback div -->
+                <div class="questions-page__feedback-div"></div>
+                <!--  Answer -->
+                <li class="questions-page__answer-line" style="direction: rtl"> <span class="questions-page__answer-span questions-page__answer-D">-4-</span></li>
+            </div>
+        </ul>
+
+        <!--  ICON NAMES: x is   ion-close-round  , check is   ion-checkmark-round-->
+        <div class="btn-holder">
+            <button class="questions-page__submit-btn btn">تأكيد</button>
+            <button class="questions-page__continue-btn btn">كمل نجاوب</button>
+        </div>
+    </div>
+</div>
+
+<div class="results-page">
+    <div class="container">
+        <h3 class="results-page__info">: تحصل على معدل </h3>
+        <h2 class="results-page__score">100%</h2>
+        <button class="results-page__retake-btn btn">عـــاود من جــديــد</button>
+    </div>
+</div>
+          
+    
+  
+
+</body>
+
+</html>    
